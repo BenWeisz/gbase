@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.20)
 # Configure! your exe name
 set(EXE_NAME quick-start)
 # Configure! this as the absolute path to your vendors folder
-set(VENDORS /your/vendors/path/here)
+set(VENDORS "C:/dev/vendors")
 # Configure! this if you want to build for the old intel based apple systems
 # set(INTEL_APPLE 1)
 
@@ -48,6 +48,11 @@ target_link_libraries(${EXE_NAME} PUBLIC glfw)
 
 # Load the GLAD source
 target_sources(${EXE_NAME} PUBLIC ${VENDORS}/glad/src/glad.c) 
+
+# Common sources go here
+# target_sources(${EXE_NAME} PUBLIC src/your_file.c
+    # src/another_file.c
+    # src/and_another.c)
 
 # Configure! Set up the platform dependent sources
 if(WIN32)
