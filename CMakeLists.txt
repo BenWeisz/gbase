@@ -7,7 +7,9 @@ cmake_minimum_required(VERSION 3.20)
 # Configure! your exe name
 set(EXE_NAME quick-start)
 # Configure! this as the absolute path to your vendors folder
-set(VENDORS /home/weiszben/vendors)
+set(VENDORS /your/vendors/path/here)
+# Configure! this if you want to build for the old intel based apple systems
+# set(INTEL_APPLE 1)
 
 # Setting up the project name
 project(${EXE_NAME})
@@ -22,10 +24,14 @@ set(CMAKE_C_FLAGS "-Wall")
 # set(CMAKE_CXX_STANDARD 14)
 # set(CMAKE_CXX_FLAGS "-Wall")
 
-###################################
-# Configure! up the sources
-set(SOURCE_FILES main.c 
-    ) # Other src files go here with /src/file.c format
+# Configuration for Intel based macs
+if(APPLE)
+    if(DEFINED INTEL_APPLE)
+        set(CMAKE_OSX_ARCHITECTURES "x86_64")
+    ENDIF()
+ENDIF()
+
+set(SOURCE_FILES main.c)
 
 # Add the executable
 add_executable(${EXE_NAME} ${SOURCE_FILES})
@@ -42,6 +48,15 @@ target_link_libraries(${EXE_NAME} PUBLIC glfw)
 
 # Load the GLAD source
 target_sources(${EXE_NAME} PUBLIC ${VENDORS}/glad/src/glad.c) 
+
+# Configure! Set up the platform dependent sources
+if(WIN32)
+    # target_sources(${EXE_NAME} PUBLIC src/win32_impl.c)
+elseif(APPLE)
+    # target_sources(${EXE_NAME} PUBLIC src/macos_impl.c)
+else() # Linux
+    # target_sources(${EXE_NAME} PUBLIC src/linux_impl.c)
+endif()
 
 # Add debug mode macro
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

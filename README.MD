@@ -1,5 +1,6 @@
 # 1)
 - Create a /vendors folder in an alternate location
+- set the VENDORS var in the cmake file
 
 - Install cmake
 
