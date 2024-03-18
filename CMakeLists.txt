@@ -11,6 +11,7 @@ set(VENDORS "C:/dev/vendors")
 # Configure! this if you want to build for the old intel based apple systems
 # set(INTEL_APPLE 1)
 
+
 # Setting up the project name
 project(${EXE_NAME})
 
