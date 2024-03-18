@@ -31,8 +31,7 @@ if(APPLE)
     ENDIF()
 ENDIF()
 
-set(SOURCE_FILES main.c
-    ${VENDORS}/cimgui/cimgui.cpp)
+set(SOURCE_FILES main.c)
 
 # Add the executable
 add_executable(${EXE_NAME} ${SOURCE_FILES})
