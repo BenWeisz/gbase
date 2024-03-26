@@ -34,6 +34,10 @@ ENDIF()
 
 set(SOURCE_FILES main.c)
 
+# Setting up cimgui variables
+set(cimgui ${VENDORS}/cimgui)
+set(imgui_impl ${cimgui}/imgui/backends)
+
 # Add the executable
 add_executable(${EXE_NAME} ${SOURCE_FILES})
 
@@ -43,13 +47,32 @@ add_subdirectory(${VENDORS}/glfw-3.4 glfw-3.4)
 # Add the include directory for headers
 target_include_directories(${EXE_NAME} PUBLIC include)
 target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/glad/include) # GLAD - OpenGL 4.6 Core
-target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/cimgui) # imgui
+target_include_directories(${EXE_NAME} PUBLIC ${cimgui}) # cimgui
+target_include_directories(${EXE_NAME} PUBLIC ${cimgui}/generator/output) # cimgui
+target_include_directories(${EXE_NAME} PUBLIC ${cimgui}/imgui) # imgui
+target_include_directories(${EXE_NAME} PUBLIC ${imgui_impl}) # imgui_impl
 
 # Link the compile sources
 target_link_libraries(${EXE_NAME} PUBLIC glfw)
 
 # Load the GLAD source
 target_sources(${EXE_NAME} PUBLIC ${VENDORS}/glad/src/glad.c) 
+
+# Load the cimgui sources
+target_sources(${EXE_NAME} PUBLIC
+    ${cimgui}/cimgui.cpp
+    ${cimgui}/imgui/imgui.cpp
+    ${cimgui}/imgui/imgui_demo.cpp
+    ${cimgui}/imgui/imgui_draw.cpp
+    ${cimgui}/imgui/imgui_tables.cpp
+    ${cimgui}/imgui/imgui_widgets.cpp
+    ${imgui_impl}/imgui_impl_opengl3.cpp
+    ${imgui_impl}/imgui_impl_glfw.cpp)
+
+# cimgui compile definitions
+add_compile_definitions(
+    IMGUI_IMPL_API=extern\ \"C\"
+    IMGUI_IMPL_OPENGL_LOADER_GL3W) 
 
 # Common sources go here
 # target_sources(${EXE_NAME} PUBLIC src/your_file.c

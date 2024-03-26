@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 
+#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+#include "cimgui.h"
+#include "cimgui_impl.h"
+
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -38,20 +42,38 @@ int main(void)
     /* Setup a basic input handler */
     glfwSetKeyCallback(window, key_callback);
 
+    // setup imgui
+    igCreateContext(NULL);
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 150");
+
+    bool showDemoWindow = false;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        /* Poll for and process events */
+        glfwPollEvents();
+        
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        igShowDemoWindow(&showDemoWindow);
+        igRender();
+
         /* Render here */
         glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
-
-        /* Poll for and process events */
-        glfwPollEvents();
     }
 
+    // imgui clean up
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    igDestroyContext(NULL);
+
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
