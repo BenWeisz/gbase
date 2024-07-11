@@ -48,14 +48,16 @@ set(CIMGUI_SOURCES
 
 add_library(cimgui STATIC ${CIMGUI_SOURCES})
 
-target_compile_definitions(cimgui PUBLIC "-DIMGUI_IMPL_API=extern \"C\"")
-target_compile_definitions(cimgui PUBLIC "-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
+target_compile_definitions(cimgui PUBLIC 
+	"-DIMGUI_IMPL_API=extern \"C\""
+	"-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
 
 # Add include directories cimgui needs
-target_include_directories(cimgui PUBLIC ${VENDORS}/cimgui)
-target_include_directories(cimgui PUBLIC ${VENDORS}/cimgui/imgui)
-target_include_directories(cimgui PUBLIC ${VENDORS}/cimgui/generator/output)
-target_include_directories(cimgui PUBLIC ${VENDORS}/glad/include)
+target_include_directories(cimgui PUBLIC
+	${VENDORS}/cimgui
+	${VENDORS}/cimgui/imgui
+	${VENDORS}/cimgui/generator/output
+	${VENDORS}/glad/include)
 
 target_link_libraries(cimgui PUBLIC glfw)
 
@@ -87,11 +89,12 @@ add_executable(${EXE_NAME} ${SOURCE_FILES})
 add_subdirectory(${VENDORS}/glfw-3.4 glfw-3.4)
 
 # Add the include directory for headers
-target_include_directories(${EXE_NAME} PUBLIC include)
-target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/glad/include) # GLAD - OpenGL 4.6 Core
-target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/cimgui)
-target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/cimgui/imgui)
-target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/cimgui/generator/output)
+target_include_directories(${EXE_NAME} PUBLIC
+	include
+	${VENDORS}/glad/include # GLAD - OpenGL 4.6 Core
+	${VENDORS}/cimgui
+	${VENDORS}/cimgui/imgui
+	${VENDORS}/cimgui/generator/output)
 
 # Link glfw, cimgui to application
 # Note: We do this a bit differently for APPLE beacuse its linker is smarter and will rescan the static libs for objects
@@ -105,8 +108,10 @@ endif()
 target_sources(${EXE_NAME} PUBLIC ${VENDORS}/glad/src/glad.c) 
 
 # Add CIMGUI compile definitions
-target_compile_definitions(${EXE_NAME} PUBLIC "-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
-target_compile_definitions(${EXE_NAME} PUBLIC -DCIMGUI_USE_OPENGL3 -DCIMGUI_USE_GLFW)
+target_compile_definitions(${EXE_NAME} PUBLIC 
+	"-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1"
+	-DCIMGUI_USE_OPENGL3
+	-DCIMGUI_USE_GLFW)
 
 # Add debug mode macro
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
