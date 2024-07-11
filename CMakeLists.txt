@@ -16,13 +16,13 @@ project(${EXE_NAME})
 
 ###################################
 # Configure! the language standard
-# Enable these for C99
-set(CMAKE_C_STANDARD 99)
+# Set C standard here (Used in App)
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS "-Wall")
 
-# Enable these for C++14
-# set(CMAKE_CXX_STANDARD 14)
-# set(CMAKE_CXX_FLAGS "-Wall")
+# Set C++ standard here (Used in cimgui lib)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "-Wall")
 
 # Configuration for Intel based macs
 if(APPLE)
@@ -31,7 +31,54 @@ if(APPLE)
     ENDIF()
 ENDIF()
 
-set(SOURCE_FILES main.c)
+###################################
+# Setup cimgui library build
+
+# Sources need by cimgui
+set(CIMGUI_SOURCES
+	${VENDORS}/cimgui/cimgui.cpp
+	${VENDORS}/cimgui/imgui/imgui.cpp
+	${VENDORS}/cimgui/imgui/imgui_draw.cpp
+	${VENDORS}/cimgui/imgui/imgui_tables.cpp
+	${VENDORS}/cimgui/imgui/imgui_demo.cpp
+	${VENDORS}/cimgui/imgui/imgui_widgets.cpp
+	${VENDORS}/cimgui/imgui/backends/imgui_impl_opengl3.cpp
+	${VENDORS}/cimgui/imgui/backends/imgui_impl_glfw.cpp
+	${VENDORS}/glad/src/glad.c)
+
+add_library(cimgui STATIC ${CIMGUI_SOURCES})
+
+target_compile_definitions(cimgui PUBLIC "-DIMGUI_IMPL_API=extern \"C\"")
+target_compile_definitions(cimgui PUBLIC "-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
+
+# Add include directories cimgui needs
+target_include_directories(cimgui PUBLIC ${VENDORS}/cimgui)
+target_include_directories(cimgui PUBLIC ${VENDORS}/cimgui/imgui)
+target_include_directories(cimgui PUBLIC ${VENDORS}/cimgui/generator/output)
+target_include_directories(cimgui PUBLIC ${VENDORS}/glad/include)
+
+target_link_libraries(cimgui PUBLIC glfw)
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/cimgui)
+set_target_properties(cimgui PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/cimgui)
+
+###################################
+
+# Configure!
+# Common sources go here
+set(SOURCE_FILES main.c
+	# src/another_file.c
+	# src/and_another.c
+	)
+
+# Configure! Set up the platform dependent sources
+if(WIN32)
+    # list(APPEND SOURCE_FILES src/win32_impl.c)
+elseif(APPLE)
+    # list(APPEND SOURCE_FILES src/macos_impl.c)
+else() # Linux
+    # list(APPEND SOURCE_FILES src/linux_impl.c)
+endif()
 
 # Add the executable
 add_executable(${EXE_NAME} ${SOURCE_FILES})
@@ -42,26 +89,24 @@ add_subdirectory(${VENDORS}/glfw-3.4 glfw-3.4)
 # Add the include directory for headers
 target_include_directories(${EXE_NAME} PUBLIC include)
 target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/glad/include) # GLAD - OpenGL 4.6 Core
+target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/cimgui)
+target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/cimgui/imgui)
+target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/cimgui/generator/output)
 
-# Link the compile sources
-target_link_libraries(${EXE_NAME} PUBLIC glfw)
+# Link glfw, cimgui to application
+# Note: We do this a bit differently for APPLE beacuse its linker is smarter and will rescan the static libs for objects
+if (APPLE)
+	target_link_libraries(${EXE_NAME} PUBLIC cimgui)
+else()
+	target_link_libraries(${EXE_NAME} PUBLIC glfw cimgui)
+endif()
 
 # Load the GLAD source
 target_sources(${EXE_NAME} PUBLIC ${VENDORS}/glad/src/glad.c) 
 
-# Common sources go here
-# target_sources(${EXE_NAME} PUBLIC src/your_file.c
-    # src/another_file.c
-    # src/and_another.c)
-
-# Configure! Set up the platform dependent sources
-if(WIN32)
-    # target_sources(${EXE_NAME} PUBLIC src/win32_impl.c)
-elseif(APPLE)
-    # target_sources(${EXE_NAME} PUBLIC src/macos_impl.c)
-else() # Linux
-    # target_sources(${EXE_NAME} PUBLIC src/linux_impl.c)
-endif()
+# Add CIMGUI compile definitions
+target_compile_definitions(${EXE_NAME} PUBLIC "-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
+target_compile_definitions(${EXE_NAME} PUBLIC -DCIMGUI_USE_OPENGL3 -DCIMGUI_USE_GLFW)
 
 # Add debug mode macro
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

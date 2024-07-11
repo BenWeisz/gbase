@@ -1,3 +1,7 @@
+#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+#include "cimgui.h"
+#include "cimgui_impl.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -16,6 +20,10 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Quick Start", NULL, NULL);
@@ -38,12 +46,25 @@ int main(void)
     /* Setup a basic input handler */
     glfwSetKeyCallback(window, key_callback);
 
+	igCreateContext(NULL);
+	ImGui_ImplGlfw_InitForOpenGL(window, 1);
+	ImGui_ImplOpenGL3_Init("#version 150");
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+		ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+		igNewFrame();
+
+		igShowDemoWindow(NULL);
+
         /* Render here */
         glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+		igRender();
+		ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -51,6 +72,10 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
+
+   	ImGui_ImplOpenGL3_Shutdown();
+   	ImGui_ImplGlfw_Shutdown();
+   	igDestroyContext(NULL);
 
 	glfwDestroyWindow(window);
     glfwTerminate();
