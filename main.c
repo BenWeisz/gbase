@@ -1,11 +1,11 @@
-#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
-#include "cimgui.h"
-#include "cimgui_impl.h"
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
+
+#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+#include "cimgui.h"
+#include "cimgui_impl.h"
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -21,6 +21,7 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+	/* Configure the opengl profile */
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -46,6 +47,7 @@ int main(void)
     /* Setup a basic input handler */
     glfwSetKeyCallback(window, key_callback);
 
+	/* Initialized ImGui */
 	igCreateContext(NULL);
 	ImGui_ImplGlfw_InitForOpenGL(window, 1);
 	ImGui_ImplOpenGL3_Init("#version 150");
@@ -53,6 +55,7 @@ int main(void)
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+    	/* Begin ImGui Frame */
 		ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
 		igNewFrame();
@@ -63,6 +66,7 @@ int main(void)
         glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+		/* Render ImGui data */
 		igRender();
 		ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
 
@@ -73,6 +77,7 @@ int main(void)
         glfwPollEvents();
     }
 
+	/* Free ImGui resources */
    	ImGui_ImplOpenGL3_Shutdown();
    	ImGui_ImplGlfw_Shutdown();
    	igDestroyContext(NULL);
