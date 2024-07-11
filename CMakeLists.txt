@@ -42,7 +42,6 @@ add_subdirectory(${VENDORS}/glfw-3.4 glfw-3.4)
 # Add the include directory for headers
 target_include_directories(${EXE_NAME} PUBLIC include)
 target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/glad/include) # GLAD - OpenGL 4.6 Core
-target_include_directories(${EXE_NAME} PUBLIC ${VENDORS}/cimgui) # imgui
 
 # Link the compile sources
 target_link_libraries(${EXE_NAME} PUBLIC glfw)
