@@ -1,6 +1,8 @@
 # gbase
 
-A platform agnostic quick start project for graphics programming with OpenGL and GLFW 
+A platform agnostic quick start project for graphics programming with OpenGL and GLFW
+
+For CIMGUI support switch to the `imgui` branch
 
 ## Prerequisites
 
